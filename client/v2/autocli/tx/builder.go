@@ -1,11 +1,14 @@
 package tx
 
 import (
+	"fmt"
+
 	txv1beta1 "cosmossdk.io/api/cosmos/tx/v1beta1"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/cosmos/cosmos-proto/anyutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 )
 
 func GetTxBody(tx sdk.Tx) (*txv1beta1.TxBody, error) {
@@ -43,4 +46,30 @@ func getTxWithTimeoutHeight(tx sdk.Tx) uint64 {
 	}
 
 	return 0
+}
+
+func GetTxSigs(tx sdk.Tx) (*txv1beta1.AuthInfo, [][]byte, error) {
+	verifiableTx, ok := tx.(authsigning.SigVerifiableTx)
+	if !ok {
+		return nil, nil, fmt.Errorf("invalid tx type; expected: %T, got: %T", (*authsigning.SigVerifiableTx)(nil), tx)
+	}
+
+	sigs, err := verifiableTx.GetSignaturesV2()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	signers, err := verifiableTx.GetSigners()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// check that signer length and signature length are the same
+	if len(sigs) != len(signers) {
+		return nil, nil, fmt.Errorf("invalid number of signer;  expected: %d, got %d", len(signers), len(sigs))
+	}
+
+	// TODO
+
+	return nil, nil, nil
 }

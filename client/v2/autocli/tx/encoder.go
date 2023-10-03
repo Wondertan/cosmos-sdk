@@ -11,15 +11,20 @@ import (
 // TxEncoder returns a default protobuf v2 TxEncoder
 func TxEncoder() sdk.TxEncoder {
 	return func(tx sdk.Tx) ([]byte, error) {
+		auth, sigs, err := GetTxSigs(tx)
+		if err != nil {
+			return nil, err
+		}
+
 		body, err := GetTxBody(tx)
 		if err != nil {
 			return nil, err
 		}
 
 		raw := &txv1beta1.Tx{
-			Body: body,
-			// AuthInfo: txWrapper.getAuthInfoBytes(),
-			// Signatures: txWrapper.tx.Signatures,
+			Body:       body,
+			AuthInfo:   auth,
+			Signatures: sigs,
 		}
 
 		return proto.Marshal(raw)
@@ -29,15 +34,20 @@ func TxEncoder() sdk.TxEncoder {
 // TxJSONEncoder returns a default protobuf v2 JSON TxEncoder.
 func TxJSONEncoder(cdc codec.Codec) sdk.TxEncoder {
 	return func(tx sdk.Tx) ([]byte, error) {
+		auth, sigs, err := GetTxSigs(tx)
+		if err != nil {
+			return nil, err
+		}
+
 		body, err := GetTxBody(tx)
 		if err != nil {
 			return nil, err
 		}
 
 		return cdc.MarshalJSON(&txv1beta1.Tx{
-			Body: body,
-			// AuthInfo: txWrapper.getAuthInfoBytes(),
-			// Signatures: txWrapper.tx.Signatures,
+			Body:       body,
+			AuthInfo:   auth,
+			Signatures: sigs,
 		})
 	}
 }
