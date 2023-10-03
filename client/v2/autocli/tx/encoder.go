@@ -1,8 +1,6 @@
 package tx
 
 import (
-	"fmt"
-
 	txv1beta1 "cosmossdk.io/api/cosmos/tx/v1beta1"
 	"google.golang.org/protobuf/proto"
 
@@ -13,15 +11,15 @@ import (
 // TxEncoder returns a default protobuf v2 TxEncoder
 func TxEncoder() sdk.TxEncoder {
 	return func(tx sdk.Tx) ([]byte, error) {
-		txWrapper, ok := tx.(*wrapper)
-		if !ok {
-			return nil, fmt.Errorf("expected %T, got %T", &wrapper{}, tx)
+		body, err := GetTxBody(tx)
+		if err != nil {
+			return nil, err
 		}
 
-		raw := &txv1beta1.TxRaw{
-			BodyBytes:     txWrapper.getBodyBytes(),
-			AuthInfoBytes: txWrapper.getAuthInfoBytes(),
-			Signatures:    txWrapper.tx.Signatures,
+		raw := &txv1beta1.Tx{
+			Body: body,
+			// AuthInfo: txWrapper.getAuthInfoBytes(),
+			// Signatures: txWrapper.tx.Signatures,
 		}
 
 		return proto.Marshal(raw)
@@ -31,11 +29,15 @@ func TxEncoder() sdk.TxEncoder {
 // TxJSONEncoder returns a default protobuf v2 JSON TxEncoder.
 func TxJSONEncoder(cdc codec.Codec) sdk.TxEncoder {
 	return func(tx sdk.Tx) ([]byte, error) {
-		txWrapper, ok := tx.(*wrapper)
-		if ok {
-			return cdc.MarshalJSON(txWrapper.tx)
+		body, err := GetTxBody(tx)
+		if err != nil {
+			return nil, err
 		}
 
-		return nil, fmt.Errorf("expected %T, got %T", &wrapper{}, tx)
+		return cdc.MarshalJSON(&txv1beta1.Tx{
+			Body: body,
+			// AuthInfo: txWrapper.getAuthInfoBytes(),
+			// Signatures: txWrapper.tx.Signatures,
+		})
 	}
 }
