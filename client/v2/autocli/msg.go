@@ -11,9 +11,9 @@ import (
 	"google.golang.org/protobuf/types/dynamicpb"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
+	"cosmossdk.io/client/v2/autocli/tx"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -137,7 +137,7 @@ func (b *Builder) BuildMsgMethodCommand(descriptor protoreflect.MethodDescriptor
 		msg := dynamicpb.NewMessage(input.Descriptor())
 		proto.Merge(msg, input.Interface())
 
-		return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		return tx.GenerateOrBroadcastTxCLI(clientCtx, b.Keyring, cmd.Flags(), msg)
 	})
 
 	if b.AddTxConnFlags != nil {

@@ -14,12 +14,13 @@ import (
 
 	reflectionv2alpha1 "cosmossdk.io/api/cosmos/base/reflection/v2alpha1"
 	"cosmossdk.io/client/v2/autocli/flag"
+	"cosmossdk.io/client/v2/autocli/keyring"
 	"cosmossdk.io/client/v2/internal/testpb"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	addresscodec "github.com/cosmos/cosmos-sdk/codec/address"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
+	sdkkeyring "github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 )
@@ -48,7 +49,7 @@ func initFixture(t *testing.T) *fixture {
 	assert.NilError(t, err)
 
 	encodingConfig := moduletestutil.MakeTestEncodingConfig()
-	kr, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendMemory, home, nil, encodingConfig.Codec)
+	kr, err := sdkkeyring.New(sdk.KeyringServiceName(), sdkkeyring.BackendMemory, home, nil, encodingConfig.Codec)
 	assert.NilError(t, err)
 
 	var initClientCtx client.Context
@@ -68,16 +69,19 @@ func initFixture(t *testing.T) *fixture {
 	conn := &testClientConn{ClientConn: clientConn}
 	b := &Builder{
 		Builder: flag.Builder{
-			TypeResolver: protoregistry.GlobalTypes,
-			FileResolver: protoregistry.GlobalFiles,
-			ClientCtx:    initClientCtx,
-			Keyring:      kr,
+			TypeResolver:          protoregistry.GlobalTypes,
+			FileResolver:          protoregistry.GlobalFiles,
+			AddressCodec:          initClientCtx.AddressCodec,
+			ValidatorAddressCodec: initClientCtx.ValidatorAddressCodec,
+			ConsensusAddressCodec: initClientCtx.ConsensusAddressCodec,
+			Keyring:               keyring.NoKeyring{},
 		},
 		GetClientConn: func(*cobra.Command) (grpc.ClientConnInterface, error) {
 			return conn, nil
 		},
 		AddQueryConnFlags: flags.AddQueryFlagsToCmd,
 		AddTxConnFlags:    flags.AddTxFlagsToCmd,
+		ClientCtx:         initClientCtx,
 	}
 	assert.NilError(t, b.ValidateAndComplete())
 

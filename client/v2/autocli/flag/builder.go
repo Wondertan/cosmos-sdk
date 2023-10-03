@@ -16,11 +16,11 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	msgv1 "cosmossdk.io/api/cosmos/msg/v1"
 	"cosmossdk.io/client/v2/autocli/keyring"
+	"cosmossdk.io/client/v2/autocli/tx"
 	"cosmossdk.io/client/v2/internal/util"
+	"cosmossdk.io/core/address"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+	"github.com/cosmos/cosmos-sdk/runtime"
 )
 
 // Builder manages options for building pflag flags for protobuf messages.
@@ -45,11 +45,10 @@ type Builder struct {
 	// Keyring is the keyring to use for client/v2.
 	Keyring keyring.Keyring
 
-	// ClientCtx contains the necessary information needed to execute the commands.
-	ClientCtx client.Context
-
-	// TxConfigOptions is required to support sign mode textual
-	TxConfigOpts tx.ConfigOptions
+	// Address Codecs are the address codecs to use for client/v2.
+	AddressCodec          address.Codec
+	ValidatorAddressCodec runtime.ValidatorAddressCodec
+	ConsensusAddressCodec runtime.ConsensusAddressCodec
 }
 
 func (b *Builder) init() {
@@ -186,13 +185,13 @@ func (b *Builder) addMessageFlags(ctx context.Context, flagSet *pflag.FlagSet, m
 		}
 
 		commandOptions.FlagOptions[signerFieldName] = &autocliv1.FlagOptions{
-			Name:      flags.FlagFrom,
+			Name:      tx.FlagFrom,
 			Usage:     "Name or address with which to sign the message",
 			Shorthand: "f",
 		}
 
 		messageBinder.SignerInfo = SignerInfo{
-			FieldName: flags.FlagFrom,
+			FieldName: tx.FlagFrom,
 			IsFlag:    true,
 		}
 	}

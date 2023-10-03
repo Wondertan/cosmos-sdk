@@ -13,7 +13,7 @@ import (
 	"cosmossdk.io/depinject"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdkflags "github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 )
 
@@ -43,7 +43,7 @@ type AppOptions struct {
 	// ClientCtx contains the necessary information needed to execute the commands.
 	ClientCtx client.Context
 
-	// TxConfigOptions is required to support sign mode textual
+	// TxConfigOptions are the transactions config options.
 	TxConfigOpts tx.ConfigOptions
 }
 
@@ -65,17 +65,20 @@ type AppOptions struct {
 func (appOptions AppOptions) EnhanceRootCommand(rootCmd *cobra.Command) error {
 	builder := &Builder{
 		Builder: flag.Builder{
-			TypeResolver: protoregistry.GlobalTypes,
-			FileResolver: proto.HybridResolver,
-			ClientCtx:    appOptions.ClientCtx,
-			Keyring:      appOptions.Keyring,
-			TxConfigOpts: appOptions.TxConfigOpts,
+			TypeResolver:          protoregistry.GlobalTypes,
+			FileResolver:          proto.HybridResolver,
+			Keyring:               appOptions.Keyring,
+			AddressCodec:          appOptions.ClientCtx.AddressCodec,
+			ValidatorAddressCodec: appOptions.ClientCtx.AddressCodec,
+			ConsensusAddressCodec: appOptions.ClientCtx.AddressCodec,
 		},
+		ClientCtx:    appOptions.ClientCtx,
+		TxConfigOpts: appOptions.TxConfigOpts,
 		GetClientConn: func(cmd *cobra.Command) (grpc.ClientConnInterface, error) {
 			return client.GetClientQueryContext(cmd)
 		},
-		AddQueryConnFlags: flags.AddQueryFlagsToCmd,
-		AddTxConnFlags:    flags.AddTxFlagsToCmd,
+		AddQueryConnFlags: sdkflags.AddQueryFlagsToCmd,
+		AddTxConnFlags:    sdkflags.AddTxFlagsToCmd,
 	}
 
 	return appOptions.EnhanceRootCommandWithBuilder(rootCmd, builder)

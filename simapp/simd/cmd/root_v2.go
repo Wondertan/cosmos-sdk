@@ -18,6 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
@@ -149,5 +150,5 @@ func ProvideKeyring(clientCtx client.Context, addressCodec address.Codec) (clien
 		return nil, err
 	}
 
-	return kb, nil
+	return keyring.NewAutoCLIKeyring(kb)
 }
