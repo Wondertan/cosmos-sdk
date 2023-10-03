@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"cosmossdk.io/client/v2/internal/flags"
 	cosmos_proto "github.com/cosmos/cosmos-proto"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -17,6 +16,7 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	msgv1 "cosmossdk.io/api/cosmos/msg/v1"
 	"cosmossdk.io/client/v2/autocli/keyring"
+	"cosmossdk.io/client/v2/internal/flags"
 	"cosmossdk.io/client/v2/internal/util"
 	"cosmossdk.io/core/address"
 
