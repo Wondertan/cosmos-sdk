@@ -14,7 +14,6 @@ import (
 
 	reflectionv2alpha1 "cosmossdk.io/api/cosmos/base/reflection/v2alpha1"
 	"cosmossdk.io/client/v2/autocli/flag"
-	"cosmossdk.io/client/v2/autocli/keyring"
 	"cosmossdk.io/client/v2/internal/testpb"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -52,6 +51,9 @@ func initFixture(t *testing.T) *fixture {
 	kr, err := sdkkeyring.New(sdk.KeyringServiceName(), sdkkeyring.BackendMemory, home, nil, encodingConfig.Codec)
 	assert.NilError(t, err)
 
+	akr, err := sdkkeyring.NewAutoCLIKeyring(kr)
+	assert.NilError(t, err)
+
 	var initClientCtx client.Context
 	initClientCtx = initClientCtx.
 		WithAddressCodec(addresscodec.NewBech32Codec("cosmos")).
@@ -74,7 +76,7 @@ func initFixture(t *testing.T) *fixture {
 			AddressCodec:          initClientCtx.AddressCodec,
 			ValidatorAddressCodec: initClientCtx.ValidatorAddressCodec,
 			ConsensusAddressCodec: initClientCtx.ConsensusAddressCodec,
-			Keyring:               keyring.NoKeyring{},
+			Keyring:               akr,
 		},
 		GetClientConn: func(*cobra.Command) (grpc.ClientConnInterface, error) {
 			return conn, nil
