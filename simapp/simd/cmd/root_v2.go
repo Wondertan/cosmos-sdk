@@ -131,7 +131,6 @@ func ProvideClientContext(
 		WithValidatorAddressCodec(validatorAddressCodec).
 		WithConsensusAddressCodec(consensusAddressCodec).
 		WithHomeDir(simapp.DefaultNodeHome).
-		WithTxConfig(txConfig).
 		WithViper("") // In simapp, we don't use any prefix for env variables.
 
 	// Read the config to overwrite the default values with the values from the config file

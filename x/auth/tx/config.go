@@ -22,7 +22,7 @@ type config struct {
 	encoder        sdk.TxEncoder
 	jsonDecoder    sdk.TxDecoder
 	jsonEncoder    sdk.TxEncoder
-	protoCodec     codec.ProtoCodecMarshaler
+	protoCodec     codec.Codec
 	signingContext *txsigning.Context
 }
 
@@ -167,7 +167,11 @@ func NewSigningHandlerMap(configOptions ConfigOptions) (*txsigning.HandlerMap, e
 // custom sign mode handlers. If ConfigOptions is an empty struct then default values will be used.
 func NewTxConfigWithOptions(protoCodec codec.ProtoCodecMarshaler, configOptions ConfigOptions) (client.TxConfig, error) {
 	txConfig := &config{
-		protoCodec: protoCodec,
+		protoCodec:  protoCodec,
+		decoder:     configOptions.ProtoDecoder,
+		encoder:     configOptions.ProtoEncoder,
+		jsonDecoder: configOptions.JSONDecoder,
+		jsonEncoder: configOptions.JSONEncoder,
 	}
 	if configOptions.ProtoDecoder == nil {
 		txConfig.decoder = DefaultTxDecoder(protoCodec)
