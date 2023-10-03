@@ -126,8 +126,8 @@ schema = 3
     version = "v1.2.0"
     hash = "sha256-Hd19V0RCiMoCL67NsqvWIsvWF8KM3LnuJTbYjWtQkEo="
   [mod."github.com/cosmos/gogoproto"]
-    version = "v1.4.11"
-    hash = "sha256-hXJIGN8Arg09ldCgrSyYZK+xMelYavEj2I3ltxJfAqE="
+    version = "v1.4.12-0.20230929195259-fa499d3bef38"
+    hash = "sha256-txRnbsaBYBsBVnVr2/aCgCioVX5/ZGVWMrBD2m89PEE="
   [mod."github.com/cosmos/iavl"]
     version = "v1.0.0-rc.1"
     hash = "sha256-hb3RDt7Cyj5TIZp8socDzmJ+Pip8w6d4fXi0bJl5zHo="

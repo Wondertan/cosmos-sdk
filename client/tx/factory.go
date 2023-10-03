@@ -379,7 +379,7 @@ func (f Factory) PrintUnsignedTx(clientCtx client.Context, msgs ...sdk.Msg) erro
 		return err
 	}
 
-	json, err := clientCtx.TxConfig.TxJSONEncoder()(unsignedTx.GetTx())
+	json, err := f.txConfig.TxJSONEncoder()(unsignedTx.GetTx())
 	if err != nil {
 		return err
 	}

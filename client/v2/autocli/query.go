@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/reflect/protoreflect"
 
-	"cosmossdk.io/client/v2/autocli/tx"
+	"cosmossdk.io/client/v2/internal/flags"
 	"cosmossdk.io/client/v2/internal/util"
 )
 
@@ -112,7 +112,7 @@ func (b *Builder) BuildQueryMethodCommand(descriptor protoreflect.MethodDescript
 	}
 
 	cmd, err := b.buildMethodCommandCommon(descriptor, options, func(cmd *cobra.Command, input protoreflect.Message) error {
-		if noIndent, _ := cmd.Flags().GetBool(tx.FlagNoIndent); noIndent {
+		if noIndent, _ := cmd.Flags().GetBool(flags.FlagNoIndent); noIndent {
 			encoderOptions.Indent = ""
 		}
 
@@ -141,7 +141,7 @@ func (b *Builder) BuildQueryMethodCommand(descriptor protoreflect.MethodDescript
 	if b.AddQueryConnFlags != nil {
 		b.AddQueryConnFlags(cmd)
 
-		cmd.Flags().BoolP(tx.FlagNoIndent, "", false, "Do not indent JSON output")
+		cmd.Flags().BoolP(flags.FlagNoIndent, "", false, "Do not indent JSON output")
 	}
 
 	// silence usage only for inner txs & queries commands

@@ -10,9 +10,8 @@ import (
 	"sigs.k8s.io/yaml"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
+	"cosmossdk.io/client/v2/internal/flags"
 	"cosmossdk.io/client/v2/internal/util"
-
-	"github.com/cosmos/cosmos-sdk/client/flags"
 )
 
 type cmdType int

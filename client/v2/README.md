@@ -75,7 +75,7 @@ if err := rootCmd.Execute(); err != nil {
 
 ### Keyring
 
-`autocli` supports uses a keuring for key name resolving and signing transactions. Providing a keyring is optional, but if you want to use the `autocli` generated commands to sign transactions, you must provide a keyring.
+`autocli` supports uses a keyring for key name resolving and signing transactions. Providing a keyring is optional, but if you want to use the `autocli` generated commands to sign transactions, you must provide a keyring.
 
 :::tip
 This provides a better UX as it allows to resolve key names directly from the keyring in all transactions and commands.

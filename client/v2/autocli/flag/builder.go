@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"cosmossdk.io/client/v2/internal/flags"
 	cosmos_proto "github.com/cosmos/cosmos-proto"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -16,7 +17,6 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	msgv1 "cosmossdk.io/api/cosmos/msg/v1"
 	"cosmossdk.io/client/v2/autocli/keyring"
-	"cosmossdk.io/client/v2/autocli/tx"
 	"cosmossdk.io/client/v2/internal/util"
 	"cosmossdk.io/core/address"
 
@@ -185,13 +185,13 @@ func (b *Builder) addMessageFlags(ctx context.Context, flagSet *pflag.FlagSet, m
 		}
 
 		commandOptions.FlagOptions[signerFieldName] = &autocliv1.FlagOptions{
-			Name:      tx.FlagFrom,
+			Name:      flags.FlagFrom,
 			Usage:     "Name or address with which to sign the message",
 			Shorthand: "f",
 		}
 
 		messageBinder.SignerInfo = SignerInfo{
-			FieldName: tx.FlagFrom,
+			FieldName: flags.FlagFrom,
 			IsFlag:    true,
 		}
 	}

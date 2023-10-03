@@ -14,6 +14,7 @@ import (
 	"cosmossdk.io/client/v2/autocli/tx"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -121,9 +122,11 @@ func (b *Builder) BuildMsgMethodCommand(descriptor protoreflect.MethodDescriptor
 			return err
 		}
 
-		// enable sign mode textual
+		// enable sign mode textual and config tx options
 		b.TxConfigOpts.EnabledSignModes = append(b.TxConfigOpts.EnabledSignModes, signing.SignMode_SIGN_MODE_TEXTUAL)
 		b.TxConfigOpts.TextualCoinMetadataQueryFn = authtxconfig.NewGRPCCoinMetadataQueryFn(clientCtx)
+		b.TxConfigOpts.ProtoEncoder = tx.TxEncoder()
+		b.TxConfigOpts.JSONEncoder = tx.TxJSONEncoder(codec.NewProtoCodec(clientCtx.InterfaceRegistry))
 
 		txConfigWithTextual, err := authtx.NewTxConfigWithOptions(
 			codec.NewProtoCodec(clientCtx.InterfaceRegistry),
@@ -137,7 +140,7 @@ func (b *Builder) BuildMsgMethodCommand(descriptor protoreflect.MethodDescriptor
 		msg := dynamicpb.NewMessage(input.Descriptor())
 		proto.Merge(msg, input.Interface())
 
-		return tx.GenerateOrBroadcastTxCLI(clientCtx, b.Keyring, cmd.Flags(), msg)
+		return clienttx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 	})
 
 	if b.AddTxConnFlags != nil {
