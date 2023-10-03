@@ -4,6 +4,7 @@ import (
 	fmt "fmt"
 
 	"github.com/cosmos/gogoproto/proto"
+	protov2 "google.golang.org/protobuf/proto"
 
 	errorsmod "cosmossdk.io/errors"
 
@@ -62,7 +63,15 @@ func NewAnyWithValue(v proto.Message) (*Any, error) {
 		return nil, errorsmod.Wrap(sdkerrors.ErrPackAny, "Expecting non nil value to create a new Any")
 	}
 
-	bz, err := proto.Marshal(v)
+	var (
+		bz  []byte
+		err error
+	)
+	if msg, ok := v.(protov2.Message); ok {
+		bz, err = protov2.Marshal(msg)
+	} else {
+		bz, err = proto.Marshal(v)
+	}
 	if err != nil {
 		return nil, err
 	}

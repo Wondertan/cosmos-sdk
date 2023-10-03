@@ -11,7 +11,6 @@ import (
 	"google.golang.org/protobuf/types/dynamicpb"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	"cosmossdk.io/client/v2/autocli/tx"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
@@ -117,8 +116,6 @@ func (b *Builder) BuildMsgMethodCommand(descriptor protoreflect.MethodDescriptor
 		// enable sign mode textual and config tx options
 		b.TxConfigOpts.EnabledSignModes = append(b.TxConfigOpts.EnabledSignModes, signing.SignMode_SIGN_MODE_TEXTUAL)
 		b.TxConfigOpts.TextualCoinMetadataQueryFn = authtxconfig.NewGRPCCoinMetadataQueryFn(clientCtx)
-		b.TxConfigOpts.ProtoEncoder = tx.TxEncoder()
-		b.TxConfigOpts.JSONEncoder = tx.TxJSONEncoder(codec.NewProtoCodec(clientCtx.InterfaceRegistry))
 
 		txConfigWithTextual, err := authtx.NewTxConfigWithOptions(
 			codec.NewProtoCodec(clientCtx.InterfaceRegistry),
